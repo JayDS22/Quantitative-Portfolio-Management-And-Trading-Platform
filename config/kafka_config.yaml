@@ -1,0 +1,89 @@
+# Kafka Configuration for High-Frequency Data Pipeline
+kafka:
+  bootstrap_servers: "localhost:9092"
+  
+  # Topics configuration
+  topics:
+    market_data: "market-data"
+    trades: "trades"
+    orders: "orders"
+    signals: "signals"
+    portfolio_updates: "portfolio-updates"
+    risk_alerts: "risk-alerts"
+    
+  # Consumer configuration
+  consumer:
+    group_id: "trading-platform"
+    auto_offset_reset: "latest"
+    enable_auto_commit: true
+    auto_commit_interval_ms: 1000
+    fetch_max_wait_ms: 10  # Low latency
+    fetch_min_bytes: 1
+    max_partition_fetch_bytes: 1048576
+    session_timeout_ms: 30000
+    heartbeat_interval_ms: 3000
+    max_poll_records: 1000
+    
+  # Producer configuration
+  producer:
+    acks: 1  # Wait for leader acknowledgment
+    retries: 3
+    batch_size: 16384
+    linger_ms: 10  # Small delay for batching
+    buffer_memory: 33554432  # 32MB
+    compression_type: "snappy"
+    max_request_size: 1048576
+    
+  # Topic creation settings
+  topic_config:
+    num_partitions: 6
+    replication_factor: 1
+    cleanup_policy: "delete"
+    retention_ms: 604800000  # 7 days
+    segment_ms: 86400000  # 1 day
+    
+# Redis Configuration
+redis:
+  host: "localhost"
+  port: 6379
+  db: 0
+  max_connections: 20
+  socket_timeout: 30
+  socket_connect_timeout: 30
+  
+  # Cache configuration
+  cache:
+    default_ttl: 300  # 5 minutes
+    tick_ttl: 60  # 1 minute
+    ohlc_ttl: 3600  # 1 hour
+    performance_ttl: 60  # 1 minute
+    
+# Data Pipeline Configuration
+data_pipeline:
+  buffer_size: 1000
+  processing_threads: 4
+  batch_processing: true
+  batch_size: 100
+  
+  # Performance targets
+  performance:
+    target_latency_ms: 50
+    target_throughput_tps: 1000000
+    max_memory_mb: 2048
+    
+  # Data sources
+  sources:
+    - name: "market_data_feed"
+      type: "websocket"
+      url: "wss://api.example.com/v1/market-data"
+      symbols: ["AAPL", "GOOGL", "MSFT", "AMZN", "TSLA"]
+      
+    - name: "news_feed"
+      type: "rest"
+      url: "https://api.news.com/v1/market-news"
+      interval_seconds: 30
+      
+    - name: "economic_data"
+      type: "scheduled"
+      url: "https://api.fred.stlouisfed.org/fred/series"
+      schedule: "0 9 * * 1-5"  # Weekdays at 9 AM

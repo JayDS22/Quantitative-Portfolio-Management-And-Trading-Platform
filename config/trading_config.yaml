@@ -1,0 +1,111 @@
+# Trading Engine Configuration
+trading:
+  # Execution settings
+  max_order_size: 10000
+  commission_rate: 0.001
+  slippage_model: "linear"
+  execution_delay_ms: 5
+  
+  # Risk management
+  risk:
+    max_position_size: 0.02  # 2% of portfolio per position
+    max_portfolio_heat: 0.06  # 6% total risk exposure
+    stop_loss: 0.02  # 2% stop loss
+    take_profit: 0.04  # 4% take profit
+    max_drawdown: 0.05  # 5% maximum drawdown
+    daily_loss_limit: 0.03  # 3% daily loss limit
+    position_concentration: 0.25  # Max 25% in single asset
+    
+  # Portfolio management
+  portfolio:
+    initial_capital: 100000
+    margin_requirement: 0.5
+    cash_reserve: 0.1  # 10% cash reserve
+    rebalance_frequency: "daily"
+    
+  # Strategy configuration
+  strategies:
+    lstm_momentum:
+      enabled: true
+      allocation: 0.4  # 40% of capital
+      signal_threshold: 0.6
+      lookback_period: 60
+      
+    transformer_trend:
+      enabled: true
+      allocation: 0.4  # 40% of capital
+      signal_threshold: 0.65
+      attention_window: 100
+      
+    ensemble_ml:
+      enabled: true
+      allocation: 0.2  # 20% of capital
+      lstm_weight: 0.6
+      transformer_weight: 0.4
+      confidence_threshold: 0.7
+
+# Model Configuration
+models:
+  lstm:
+    sequence_length: 60
+    hidden_size: 128
+    num_layers: 2
+    dropout: 0.2
+    learning_rate: 0.001
+    batch_size: 32
+    epochs: 100
+    early_stopping: 20
+    
+  transformer:
+    d_model: 256
+    nhead: 8
+    num_layers: 6
+    dim_feedforward: 1024
+    dropout: 0.1
+    learning_rate: 0.0001
+    batch_size: 16
+    epochs: 50
+    warmup_steps: 1000
+
+# Backtesting Configuration
+backtesting:
+  commission: 0.001
+  slippage: 0.0005
+  initial_capital: 100000
+  max_position_size: 0.1
+  stop_loss: 0.02
+  take_profit: 0.04
+  
+  # Monte Carlo settings
+  monte_carlo:
+    simulations: 10000
+    confidence_intervals: [0.95, 0.99]
+    var_levels: [0.05, 0.01]
+    
+# API Configuration
+api:
+  host: "0.0.0.0"
+  port: 8000
+  cors_origins: ["*"]
+  rate_limit: "100/minute"
+
+# Monitoring Configuration
+monitoring:
+  prometheus_port: 8090
+  metrics_interval: 10
+  health_check_interval: 30
+  
+  # Alerting thresholds
+  alerts:
+    max_drawdown: 0.03
+    daily_loss: 0.02
+    system_latency: 100  # milliseconds
+    error_rate: 0.01  # 1%
+
+# Logging Configuration
+logging:
+  level: "INFO"
+  format: "%(asctime)s - %(name)s - %(levelname)s - %(message)s"
+  file: "logs/trading_platform.log"
+  max_bytes: 10485760  # 10MB
+  backup_count: 5
